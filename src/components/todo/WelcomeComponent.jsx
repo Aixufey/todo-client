@@ -5,7 +5,6 @@ import HelloWorldAPIService from '../services/HelloWorldAPIService';
 
 export function WelcomeComponent() {
     const { currentuser } = useParams();
-    console.log(currentuser);
 
     const [message, setMessage] = useState(null);
 

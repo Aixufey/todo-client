@@ -48,7 +48,8 @@ export function ListTodosComponent() {
                         </tr>
                     </thead>
                     <tbody>
-                        {todos.map(
+                        {todos === undefined ? [] : 
+                        todos.map(
                             (item, key) => (
                                 <tr key={key}>
                                     <td>{item.id}</td>
@@ -59,16 +60,6 @@ export function ListTodosComponent() {
                                 </tr>
                             )
                         )}
-                        {/* {todos.map(
-                            (item, key) => (
-                                <tr key={key}>
-                                    <td>{item.id}</td>
-                                    <td>{item.description}</td>
-                                    <td>{item.done.toString()}</td>
-                                    <td>{item.targetDate.toDateString()}</td>
-                                </tr>
-                            )
-                        )} */}
                     </tbody>
                 </table>
             </div>
