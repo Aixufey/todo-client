@@ -11,11 +11,7 @@ export function ListTodosComponent() {
     const targetDate = new Date(today.getFullYear() + 12, today.getMonth(), today.getDay());
 
     const [todos, setTodos] = useState([]);
-    const getAllTodosByUser = async () => {
-        const data = await TodoAPIService.getAllTodosByUser('test');
-        console.log(data)
-        setTodos(data);
-    }
+    const [message, setMessage] = useState("");
 
     // static dummy data
     // const todos = [
@@ -24,17 +20,33 @@ export function ListTodosComponent() {
     //     { id: 3, description: "Lean DevOps", done: false, targetDate: targetDate },
     // ];
 
+    const getAllTodosByUser = async (username) => {
+        const data = await TodoAPIService.getAllTodosByUser('test');
+        console.log(data)
+        setTodos(data);
+    }
+
     useEffect(() => {
         getAllTodosByUser();
-    },[])
+    },[message])
 
     const handleDeleteTodo = async (id) => {
-        console.log(id);
+        console.log(id)
+        await TodoAPIService.deleteTodo('test', id)
+            .then(
+                () => {
+                    setMessage('Deleted todo with id '.concat(id));
+            }
+        )
+        
     }
 
     return (
         <div className="container">
             <h1>Things to do!</h1>
+            { message &&
+                <div className="alert alert-warning">{message}</div>
+            }
             <div>
                 Todo details
                 <table className='table'>
