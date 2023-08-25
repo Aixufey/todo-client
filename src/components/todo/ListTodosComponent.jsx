@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import TodoAPIService from "../services/TodoAPIService";
 import { useAuth } from "../security/AuthContext";
-
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -15,7 +15,8 @@ export function ListTodosComponent() {
 
     const authContext = useAuth();
     const currentuser = authContext.currentUser;
-    console.log(currentuser)
+    
+    const navigate = useNavigate();
 
 
     // static dummy data
@@ -30,7 +31,6 @@ export function ListTodosComponent() {
     useEffect(() => {
         const handleGetAllTodos = async () => {
             const data = await TodoAPIService.getAllTodosByUser(currentuser);
-            console.log(data)
             setTodos(data);
         }
         handleGetAllTodos();
@@ -47,6 +47,16 @@ export function ListTodosComponent() {
             ).catch(err => console.log(err));
 
     }
+
+    /**
+     * Redirect to endpoint /todo/id -> <Route path='/todo/:id' element={<TodoComponent />} />
+     * Using hook useNavigate.
+     * @param {*} id 
+     */
+    const handleUpdateTodo = async (id) => {
+        console.log(id);
+        navigate(`/todo/${id}`);
+    } 
 
     return (
         <div className="container">
@@ -76,6 +86,7 @@ export function ListTodosComponent() {
                                         <td>{item.done.toString()}</td>
                                         <td>{item.targetDate}</td>
                                         <td><button className="btn btn-warning" onClick={() => handleDeleteTodo(item.id)}>Delete</button></td>
+                                        <td><button className="btn btn-success" onClick={() => handleUpdateTodo(item.id)}>Update</button></td>
                                     </tr>
                                 )
                             )}
