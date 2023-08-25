@@ -23,13 +23,31 @@ export default function TodoComponent() {
         }
         getById();
     }, [currentUser, id])
-    
+
     /**
      * 
      * @param {*} Submitted values are passed to this function from Formik
      */
     const handleSubmit = (submittedVal) => {
         console.log(submittedVal)
+    }
+
+
+    const handleValidate = (submittedVal) => {
+        let errors = {
+            // description: 'Invalid description',
+            // targetDate: 'Invalid target date'
+        }
+        if (submittedVal.description.length < 5) {
+            errors.description = 'Description should be at least 5 characters long'
+        }
+
+        if (submittedVal.targetDate === '') {
+            errors.targetDate = 'Target date should not be empty'
+        }
+
+        console.log(submittedVal)
+        return errors
     }
 
     return (
@@ -39,10 +57,27 @@ export default function TodoComponent() {
                 <Formik
                     initialValues={{ description, targetDate }}
                     enableReinitialize={true}
-                    onSubmit={handleSubmit}>
+                    onSubmit={handleSubmit}
+                    validate={handleValidate}
+                    validateOnChange={false}
+                    validateOnBlur={false}
+                >
+
                     {
                         () => (
                             <Form>
+
+                                <ErrorMessage
+                                    name="description"
+                                    component="div"
+                                    className="alert alert-warning"
+                                />
+                                <ErrorMessage
+                                    name="targetDate"
+                                    component="div"
+                                    className="alert alert-warning"
+                                />
+
                                 <fieldset className="form-group">
                                     <label>Description</label>
                                     <Field type="text" name="description" className="form-control" />
