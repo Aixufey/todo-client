@@ -27,7 +27,6 @@ export function ListTodosComponent() {
 
 
 
-    
     useEffect(() => {
         const handleGetAllTodos = async () => {
             const data = await TodoAPIService.getAllTodosByUser(currentuser);
