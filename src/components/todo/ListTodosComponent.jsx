@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import TodoAPIService from "../services/TodoAPIService";
 import { useAuth } from "../security/AuthContext";
 
@@ -16,7 +16,7 @@ export function ListTodosComponent() {
     const authContext = useAuth();
     const currentuser = authContext.currentUser;
     console.log(currentuser)
-    
+
 
     // static dummy data
     // const todos = [
@@ -25,15 +25,18 @@ export function ListTodosComponent() {
     //     { id: 3, description: "Lean DevOps", done: false, targetDate: targetDate },
     // ];
 
-    const handleGetAllTodos = async () => {
-        const data = await TodoAPIService.getAllTodosByUser(currentuser);
-        console.log(data)
-        setTodos(data);
-    }
 
-    useCallback(() => handleGetAllTodos(), [currentuser]);
 
-    useEffect(() => handleGetAllTodos(), []);
+    
+    useEffect(() => {
+        const handleGetAllTodos = async () => {
+            const data = await TodoAPIService.getAllTodosByUser(currentuser);
+            console.log(data)
+            setTodos(data);
+        }
+        handleGetAllTodos();
+    }, [message, currentuser]);
+
 
     const handleDeleteTodo = async (id) => {
         console.log(id)
@@ -41,15 +44,15 @@ export function ListTodosComponent() {
             .then(
                 () => {
                     setMessage('Deleted todo with id '.concat(id));
-            }
-        )
-        
+                }
+            ).catch(err => console.log(err));
+
     }
 
     return (
         <div className="container">
             <h1>Things to do!</h1>
-            { message &&
+            {message &&
                 <div className="alert alert-warning">{message}</div>
             }
             <div>
@@ -66,17 +69,17 @@ export function ListTodosComponent() {
                     </thead>
                     <tbody>
                         {
-                        todos.map(
-                            (item, key) => (
-                                <tr key={key}>
-                                    <td>{item.id}</td>
-                                    <td>{item.description}</td>
-                                    <td>{item.done.toString()}</td>
-                                    <td>{item.targetDate}</td>
-                                    <td><button className="btn btn-warning" onClick={() => handleDeleteTodo(item.id)}>Delete</button></td>
-                                </tr>
-                            )
-                        )}
+                            todos.map(
+                                (item, key) => (
+                                    <tr key={key}>
+                                        <td>{item.id}</td>
+                                        <td>{item.description}</td>
+                                        <td>{item.done.toString()}</td>
+                                        <td>{item.targetDate}</td>
+                                        <td><button className="btn btn-warning" onClick={() => handleDeleteTodo(item.id)}>Delete</button></td>
+                                    </tr>
+                                )
+                            )}
                     </tbody>
                 </table>
             </div>
