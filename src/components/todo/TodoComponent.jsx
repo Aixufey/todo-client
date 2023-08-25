@@ -1,5 +1,5 @@
 import TodoAPIService from "../services/TodoAPIService"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useAuth } from "../security/AuthContext";
 import { useEffect, useState } from "react";
 
@@ -10,6 +10,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 export default function TodoComponent() {
     const { id } = useParams();
     const authContext = useAuth();
+    const navigate = useNavigate();
     const currentUser = authContext.currentUser;
 
     const [description, setDescription] = useState('')
@@ -28,8 +29,20 @@ export default function TodoComponent() {
      * 
      * @param {*} Submitted values are passed to this function from Formik
      */
-    const handleSubmit = (submittedVal) => {
+    const handleSubmit = async (submittedVal) => {
+        // const { description, targetDate } = submittedVal; // submittedVal is returned as an object
         console.log(submittedVal)
+        const jsonBody = {
+            id: id,
+            username: currentUser,
+            description: submittedVal.description,
+            targetDate: submittedVal.targetDate,
+            done: false
+        }
+        const data = await TodoAPIService.updateTodo(currentUser, id, jsonBody);
+        if (data) {
+            navigate('/todo')
+        }
     }
 
 
