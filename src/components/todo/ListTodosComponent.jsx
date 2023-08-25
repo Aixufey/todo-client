@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import TodoAPIService from "../services/TodoAPIService";
-
+import { useAuth } from "../security/AuthContext";
 
 
 
@@ -13,6 +13,11 @@ export function ListTodosComponent() {
     const [todos, setTodos] = useState([]);
     const [message, setMessage] = useState("");
 
+    const authContext = useAuth();
+    const currentuser = authContext.currentUser;
+    console.log(currentuser)
+    
+
     // static dummy data
     // const todos = [
     //     { id: 1, description: "Learn AWS", done: false, targetDate: targetDate },
@@ -20,19 +25,19 @@ export function ListTodosComponent() {
     //     { id: 3, description: "Lean DevOps", done: false, targetDate: targetDate },
     // ];
 
-    const getAllTodosByUser = async (username) => {
-        const data = await TodoAPIService.getAllTodosByUser('test');
+    const handleGetAllTodos = async () => {
+        const data = await TodoAPIService.getAllTodosByUser(currentuser);
         console.log(data)
         setTodos(data);
     }
 
-    useEffect(() => {
-        getAllTodosByUser();
-    },[message])
+    useCallback(() => handleGetAllTodos(), [currentuser]);
+
+    useEffect(() => handleGetAllTodos(), []);
 
     const handleDeleteTodo = async (id) => {
         console.log(id)
-        await TodoAPIService.deleteTodo('test', id)
+        await TodoAPIService.deleteTodo(currentuser, id)
             .then(
                 () => {
                     setMessage('Deleted todo with id '.concat(id));
@@ -60,7 +65,7 @@ export function ListTodosComponent() {
                         </tr>
                     </thead>
                     <tbody>
-                        {todos === undefined ? [] : 
+                        {
                         todos.map(
                             (item, key) => (
                                 <tr key={key}>

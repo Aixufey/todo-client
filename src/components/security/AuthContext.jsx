@@ -12,12 +12,17 @@ export default function AuthProvider({ children }) {
     // 3. Put some state in the context    
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+    // Provide the current logged in user
+    const [currentUser, setCurrentUser] = useState(null);
+
     const handleLogin = (username, password) => {
         if (username === 'user' && password === 'test') {
             setIsAuthenticated(true);
+            setCurrentUser(username);
             return true;
         } else {
             setIsAuthenticated(false);
+            setCurrentUser(null);
             return false;
         }
     }
@@ -35,7 +40,7 @@ export default function AuthProvider({ children }) {
     }
 
     return (
-        <AuthContext.Provider value={{ provideAsObject, isAuthenticated, handleLogin, handleLogout } }>
+        <AuthContext.Provider value={{ provideAsObject, isAuthenticated, handleLogin, handleLogout, currentUser } }>
             {children}
         </AuthContext.Provider>
     )
