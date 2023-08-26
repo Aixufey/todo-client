@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import moment from "moment/moment";
 
 
 export default function TodoComponent() {
@@ -16,13 +17,17 @@ export default function TodoComponent() {
     const [description, setDescription] = useState('')
     const [targetDate, setTargetDate] = useState('')
 
+
+
     useEffect(() => {
-        const getById = async () => {
-            const data = await TodoAPIService.getToDoById(currentUser, id);
-            setDescription(data.description)
-            setTargetDate(data.targetDate)
+        if (id !== '-1') {
+            const getById = async () => {
+                const data = await TodoAPIService.getToDoById(currentUser, id);
+                setDescription(data.description)
+                setTargetDate(data.targetDate)
+            }
+            getById();
         }
-        getById();
     }, [currentUser, id])
 
     /**
@@ -39,14 +44,26 @@ export default function TodoComponent() {
             targetDate: submittedVal.targetDate,
             done: false
         }
-        const data = await TodoAPIService.updateTodo(currentUser, id, jsonBody);
-        if (data) {
-            navigate('/todo')
+
+        if (id === '-1') {
+            const data = await TodoAPIService.createTodo(currentUser, jsonBody);
+            if (data) {
+                navigate('/todo')
+            }
+        } else {
+            const data = await TodoAPIService.updateTodo(currentUser, id, jsonBody);
+            if (data) {
+                navigate('/todo')
+            }
         }
     }
 
 
     const handleValidate = (submittedVal) => {
+        const selectedDate = moment(submittedVal.targetDate)
+        const currentDate = moment();
+        const isPast = selectedDate.isBefore(currentDate, 'day');
+        console.log(isPast)
         let errors = {
             // description: 'Invalid description',
             // targetDate: 'Invalid target date'
@@ -55,11 +72,10 @@ export default function TodoComponent() {
             errors.description = 'Description should be at least 5 characters long'
         }
 
-        if (submittedVal.targetDate === '') {
-            errors.targetDate = 'Target date should not be empty'
+        if (submittedVal.targetDate === '' || submittedVal.targetDate === null || isPast) {
+            errors.targetDate = 'Enter a valid target date'
         }
 
-        console.log(submittedVal)
         return errors
     }
 

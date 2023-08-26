@@ -19,6 +19,7 @@ const TodoAPIService = (
             deleteTodo: '/users/{username}/todos/{id}',
             getById: '/users/{username}/todos/{id}',
             updateTodo: '/users/{username}/todos/{id}',
+            createTodo: '/users/{username}/todos'
         };
 
         const getAllTodosByUser = async (username) => {
@@ -61,13 +62,23 @@ const TodoAPIService = (
             }
         }
 
+        const createTodo = async (username, todo) => {
+            try {
+                const response = await todoApiClient.post(todoApiEndpoints.createTodo.replace("{username}", username), todo);
+                console.log(response.data);
+                return response.data;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
 
         return {
             getAllTodosByUser,
             deleteTodo,
             getToDoById,
             updateTodo,
-
+            createTodo
         }
     }
 

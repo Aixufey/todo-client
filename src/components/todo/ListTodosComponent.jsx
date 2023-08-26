@@ -58,6 +58,15 @@ export function ListTodosComponent() {
         navigate(`/todo/${id}`);
     } 
 
+    /**
+     * PUT & POST are being handled in the same endpoint /todo/:id
+     * Redirect to endpoint /todo/-1 -> <Route path='/todo/:id' element={<TodoComponent />} />
+     * Then conditionally render the form in TodoComponent.jsx
+     */
+    const handleAddTodo = () => { 
+        navigate('/todo/-1');
+    }
+
     return (
         <div className="container">
             <h1>Things to do!</h1>
@@ -93,6 +102,7 @@ export function ListTodosComponent() {
                     </tbody>
                 </table>
             </div>
+            <div className="btn btn-success m-5" onClick={handleAddTodo}>Add New Todo</div>
         </div>
     );
 }
